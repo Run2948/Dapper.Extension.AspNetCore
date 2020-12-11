@@ -1,9 +1,8 @@
 using System;
-using Dapper.Contrib.Extensions;
+using Dapper.Extension;
 
 namespace AspNetCore.WebSamples
 {
-    [Table("WeatherForecast")]
     public class WeatherForecast
     {
         [Key]

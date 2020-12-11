@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 using Dapper.Extension.AspNetCore;
@@ -27,25 +28,41 @@ namespace AspNetCore.WebSamples.Controllers
         }
 
         [HttpGet]
-        public IEnumerable<WeatherForecast> Get()
+        public IActionResult GetByPage(int pageIndex = 1, int pageSize = 20)
         {
-            var list = _dapper.GetAll<WeatherForecast>().ToList();
+        // var result = _dapper.Query<WeatherForecast>("select * from WeatherForecast;");
+        // var result = _dapper.QueryFirstOrDefault<WeatherForecast>("select * from WeatherForecast;");
+        // var result = _dapper.QueryFirstOrDefault<WeatherForecast>("select * from WeatherForecast where Id = @id;",new { id = 1 });
+        // var result = _dapper.QuerySingleOrDefault<WeatherForecast>("select * from WeatherForecast;");
+        // var result = _dapper.QueryFirstOrDefault<WeatherForecast>("select * from WeatherForecast where Id = @id;",new { id = 1 });
+        // var result = _dapper.QueryPlainPage<WeatherForecast>("select * from WeatherForecast limit @Skip,@Take;", pageIndex, pageSize);
+        var result = _dapper.QueryPage<WeatherForecast>("select count(*) from WeatherForecast;", "select * from WeatherForecast limit @Take OFFSET @Skip;", pageIndex, pageSize);
+        return Ok(result);
+        }
 
-            if (!list.Any())
+        [HttpGet("{id}")]
+        public IActionResult GetById(int id)
+        {
+            var result = _dapper.Get<WeatherForecast>(id);
+            return Ok(result);
+        }
+
+        [HttpPost]
+        public void Post()
+        {
+            var rng = new Random();
+            _dapper.Insert(new WeatherForecast
             {
-                var rng = new Random();
-                list = Enumerable.Range(1, 5).Select(index => new WeatherForecast
-                {
-                    Date = DateTime.Now.AddDays(index),
-                    TemperatureC = rng.Next(-20, 55),
-                    Summary = Summaries[rng.Next(Summaries.Length)]
-                }).ToList();
-                _dapper.Insert(list);
+                Date = DateTime.Now.AddDays(rng.Next(Summaries.Length)),
+                TemperatureC = rng.Next(-20, 55),
+                Summary = Summaries[rng.Next(Summaries.Length)]
+            });
+        }
 
-                list = _dapper.GetAll<WeatherForecast>().ToList();
-            }
-
-            return list;
+        [HttpDelete("id")]
+        public void Delete(int id)
+        {
+            _dapper.Delete(new WeatherForecast() { Id = id });
         }
     }
 }

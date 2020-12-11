@@ -6,12 +6,17 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using Dapper.Contrib.Extensions;
 
 namespace Dapper.Extension.AspNetCore
 {
     public abstract partial class BaseDapper<TDbConnection> where TDbConnection : DbConnection, new()
     {
+        public virtual async Task<List<dynamic>> QueryAsync(string sql, object param = null, int? commandTimeout = null, CommandType? commandType = null)
+        {
+            return await CommandExecuteAsync(async () => (await Conn.Value.QueryAsync(sql, param, Transaction, commandTimeout, commandType)).ToList());
+        }
+
+
         public virtual async Task<List<TReturn>> QueryAsync<TReturn>(string sql, object param = null, int? commandTimeout = null, CommandType? commandType = null)
         {
             return await CommandExecuteAsync(async () => (await Conn.Value.QueryAsync<TReturn>(sql, param, Transaction, commandTimeout, commandType)).ToList());
@@ -56,12 +61,6 @@ namespace Dapper.Extension.AspNetCore
         public virtual async Task<List<TReturn>> QueryAsync<TFirst, TSecond, TThird, TFourth, TFifth, TSixth, TSeventh, TReturn>(string sql, Func<TFirst, TSecond, TThird, TFourth, TFifth, TSixth, TSeventh, TReturn> map, object param = null, string splitOn = "Id", int? commandTimeout = null, CommandType? commandType = null, bool buffered = true)
         {
             return await CommandExecuteAsync(async () => (await Conn.Value.QueryAsync(sql, map, param, Transaction, buffered, splitOn, commandTimeout, commandType)).ToList());
-        }
-
-
-        public virtual async Task<List<dynamic>> QueryAsync(string sql, object param = null, int? commandTimeout = null, CommandType? commandType = null)
-        {
-            return await CommandExecuteAsync(async () => (await Conn.Value.QueryAsync(sql, param, Transaction, commandTimeout, commandType)).ToList());
         }
 
 
@@ -287,51 +286,6 @@ namespace Dapper.Extension.AspNetCore
         public virtual async Task<TReturn> ExecuteScalarAsync<TReturn>(string sql, object param = null, int? commandTimeout = null, CommandType? commandType = null)
         {
             return await Conn.Value.ExecuteScalarAsync<TReturn>(sql, param, Transaction, commandTimeout, commandType);
-        }
-
-        public async Task<T> GetAsync<T>(object id, int? commandTimeout = null) where T : class, new()
-        {
-            return await Conn.Value.GetAsync<T>(id, Transaction, commandTimeout);
-        }
-
-        public async Task<IEnumerable<T>> GetAllAsync<T>(int? commandTimeout = null) where T : class, new()
-        {
-            return await Conn.Value.GetAllAsync<T>(Transaction, commandTimeout);
-        }
-
-        public async Task<dynamic> InsertAsync<T>(IEnumerable<T> entities, int? commandTimeout = null) where T : class, new()
-        {
-            return await Conn.Value.InsertAsync(entities, Transaction, commandTimeout);
-        }
-
-        public async Task<dynamic> InsertAsync<T>(T entity, int? commandTimeout = null) where T : class, new()
-        {
-            return await Conn.Value.InsertAsync(entity, Transaction, commandTimeout);
-        }
-
-        public async Task<bool> UpdateAsync<T>(T entity, int? commandTimeout = null) where T : class, new()
-        {
-            return await Conn.Value.UpdateAsync(entity, Transaction, commandTimeout);
-        }
-
-        public async Task<bool> UpdateAsync<T>(IEnumerable<T> entities, int? commandTimeout = null) where T : class, new()
-        {
-            return await Conn.Value.UpdateAsync(entities, Transaction, commandTimeout);
-        }
-
-        public async Task<bool> DeleteAsync<T>(T entity, int? commandTimeout = null) where T : class, new()
-        {
-            return await Conn.Value.DeleteAsync(entity, Transaction, commandTimeout);
-        }
-
-        public async Task<bool> DeleteAsync<T>(object predicate, int? commandTimeout = null) where T : class, new()
-        {
-            return await Conn.Value.DeleteAsync(predicate, Transaction, commandTimeout);
-        }
-
-        public async Task<bool> DeleteAllAsync<T>(int? commandTimeout = null) where T : class, new()
-        {
-            return await Conn.Value.DeleteAllAsync<T>(Transaction, commandTimeout);
         }
 
 
