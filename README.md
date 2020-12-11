@@ -51,7 +51,7 @@ public class WeatherForecast
 All Attributes
 -------
 
-* `[Table("Tablename")]` - use another table name instead of the (by default pluralized) name of the class
+* `[Table("Tablename")]` - use another table name instead of the name of the class
 
 * `[Key]` - this property represents a database-generated identity/key
   
