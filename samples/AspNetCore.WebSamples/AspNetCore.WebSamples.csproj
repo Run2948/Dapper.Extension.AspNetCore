@@ -4,8 +4,10 @@
     <TargetFramework>netcoreapp3.1</TargetFramework>
   </PropertyGroup>
 
-  <ItemGroup>
-    <!-- <PackageReference Include="Dapper.Extension.AspNetCore.MySql" Version="1.0.0" /> -->
+  <ItemGroup Condition="'$(Configuration)' == 'Release'">
+     <PackageReference Include="Dapper.Extension.AspNetCore.MySql" Version="1.0.1" /> 
+  </ItemGroup>
+	<ItemGroup Condition="'$(Configuration)' == 'Debug'">
     <ProjectReference Include="..\..\src\Dapper.Extension.AspNetCore.MySql\Dapper.Extension.AspNetCore.MySql.csproj" />
   </ItemGroup>
 

@@ -6,10 +6,10 @@ namespace Microsoft.Extensions.DependencyInjection
 {
     public static class DapperMySqlServiceCollectionExtensions
     {
-        // public static IServiceCollection AddDapperForMySql(this IServiceCollection services)
-        // {
-        //     return services.AddDapper<MySqlDapper>();
-        // }
+        //public static IServiceCollection AddDapperForMySql(this IServiceCollection services)
+        //{
+        //    return services.AddDapper<MySqlDapper>();
+        //}
         //
         // public static IServiceCollection AddDapperForMySql(this IServiceCollection services, IConfigurationSection section)
         // {
